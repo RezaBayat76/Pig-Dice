@@ -5,11 +5,10 @@ import lombok.Data;
 
 import javax.persistence.*;
 
-@Table(name = "GAME_COMMENT")
+@Table(name = "PLAYED_GAME_COMMENT")
 @Entity
 @Data
-public class GameCommentEntity {
-
+public class PlayedGameCommentEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -22,7 +21,7 @@ public class GameCommentEntity {
 
     @ManyToOne
     @JsonManagedReference
-    private GameEntity game;
+    private PlayedGameEntity playedGame;
 
     private UserEntity user;
 }
