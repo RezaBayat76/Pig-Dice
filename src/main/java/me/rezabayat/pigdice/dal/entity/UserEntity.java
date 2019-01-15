@@ -31,4 +31,8 @@ public class UserEntity {
     @OneToMany
     @JsonBackReference
     private List<GameEntity> games;
+
+    @OneToMany
+    @JsonBackReference
+    private List<UserCommentEntity> userComments;
 }
