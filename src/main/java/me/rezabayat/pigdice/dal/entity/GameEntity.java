@@ -38,4 +38,8 @@ public class GameEntity {
     @OneToMany
     @JsonBackReference
     private List<PlayedGameEntity> playedGames;
+
+    @OneToMany
+    @JsonBackReference
+    private List<GameCommentEntity> gameComments;
 }
