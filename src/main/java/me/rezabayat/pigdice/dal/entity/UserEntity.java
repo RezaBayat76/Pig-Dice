@@ -1,11 +1,11 @@
 package me.rezabayat.pigdice.dal.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "USER")
 @Entity
@@ -13,6 +13,7 @@ import java.util.Date;
 public class UserEntity {
 
     @Id
+    @GeneratedValue
     private Long id;
 
     private String name;
@@ -26,4 +27,8 @@ public class UserEntity {
     private String userName;
 
     private String password;
+
+    @OneToMany
+    @JsonBackReference
+    private List<GameEntity> games;
 }
