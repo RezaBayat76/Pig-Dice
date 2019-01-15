@@ -1,10 +1,12 @@
 package me.rezabayat.pigdice.dal.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "GAME")
 @Entity
@@ -33,6 +35,7 @@ public class GameEntity {
     @JsonManagedReference
     private UserEntity userCreator;
 
-
-
+    @OneToMany
+    @JsonBackReference
+    private List<PlayedGameEntity> playedGames;
 }
