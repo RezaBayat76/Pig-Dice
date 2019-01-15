@@ -28,11 +28,11 @@ public class UserEntity {
 
     private String password;
 
-    @OneToMany
+    @OneToMany(mappedBy = "userCreator")
     @JsonBackReference
     private List<GameEntity> games;
 
-    @OneToMany
+    @OneToMany(mappedBy = "mentionUser")
     @JsonBackReference
     private List<UserCommentEntity> userComments;
 }

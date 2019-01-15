@@ -32,7 +32,7 @@ public class PlayedGameEntity {
     @JsonManagedReference
     private GameEntity game;
 
-    @OneToMany
+    @OneToMany(mappedBy = "playedGame")
     @JsonBackReference
     private List<PlayedGameCommentEntity> playedGameComments;
 }
