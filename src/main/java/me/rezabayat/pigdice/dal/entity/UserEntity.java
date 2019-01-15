@@ -2,6 +2,7 @@ package me.rezabayat.pigdice.dal.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
+import me.rezabayat.pigdice.enums.Role;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -27,6 +28,9 @@ public class UserEntity {
     private String userName;
 
     private String password;
+
+    @Enumerated
+    private Role role;
 
     @OneToMany(mappedBy = "userCreator")
     @JsonBackReference
