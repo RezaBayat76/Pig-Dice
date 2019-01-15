@@ -24,5 +24,6 @@ public class GameCommentEntity {
     @JsonManagedReference
     private GameEntity game;
 
+    @OneToOne
     private UserEntity user;
 }

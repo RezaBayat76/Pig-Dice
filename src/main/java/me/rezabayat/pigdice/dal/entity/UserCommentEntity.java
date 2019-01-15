@@ -20,6 +20,7 @@ public class UserCommentEntity {
 
     private Boolean accepted;
 
+    @OneToOne
     private UserEntity userCreator;
 
     @ManyToOne

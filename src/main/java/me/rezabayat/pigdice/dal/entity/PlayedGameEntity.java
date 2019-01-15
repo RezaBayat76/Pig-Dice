@@ -18,10 +18,13 @@ public class PlayedGameEntity {
     @GeneratedValue
     private Long id;
 
+    @OneToOne
     private UserEntity firstPlayer;
 
+    @OneToOne
     private UserEntity secondPlayer;
 
+    @OneToOne
     private UserEntity winner;
 
     private Long score;
