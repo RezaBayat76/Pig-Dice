@@ -1,6 +1,7 @@
 package me.rezabayat.pigdice.controller;
 
 import me.rezabayat.pigdice.dto.CommentOnGameDTO;
+import me.rezabayat.pigdice.dto.GameCommentDTO;
 import me.rezabayat.pigdice.dto.GameDTO;
 import me.rezabayat.pigdice.service.GameService;
 import org.springframework.web.bind.annotation.*;
@@ -32,4 +33,10 @@ public class GameController {
     public void addComment(@RequestBody CommentOnGameDTO commentOnGameDTO, @RequestHeader("Authorization") String token){
         this.gameService.addComment(commentOnGameDTO, token);
     }
+
+    @GetMapping("comments/{id}")
+    public List<GameCommentDTO> comments(@PathVariable("id") long id){
+        return this.gameService.comments(id);
+    }
+
 }

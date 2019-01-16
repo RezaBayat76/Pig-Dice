@@ -7,9 +7,11 @@ import me.rezabayat.pigdice.dal.repository.GameCommentRepository;
 import me.rezabayat.pigdice.dal.repository.GameRepository;
 import me.rezabayat.pigdice.dal.repository.UserRepository;
 import me.rezabayat.pigdice.dto.CommentOnGameDTO;
+import me.rezabayat.pigdice.dto.GameCommentDTO;
 import me.rezabayat.pigdice.dto.GameDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -72,5 +74,18 @@ public class GameService {
         gameCommentEntity.setUser(optionalUserCreator.get());
         this.gameCommentRepository.save(gameCommentEntity);
 
+    }
+
+    @Transactional
+    public List<GameCommentDTO> comments(long id) {
+        Optional<GameEntity> optionalGames = this.gameRepository.findById(id);
+
+        if (!optionalGames.isPresent()){
+            throw new IllegalArgumentException("Illegal request");
+        }
+
+        return optionalGames.get().getGameComments().stream()
+                .map(gameCommentEntity -> this.modelMapper.map(gameCommentEntity, GameCommentDTO.class))
+                .collect(Collectors.toList());
     }
 }
