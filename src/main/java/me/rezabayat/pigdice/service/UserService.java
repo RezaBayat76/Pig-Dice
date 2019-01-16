@@ -7,13 +7,16 @@ import me.rezabayat.pigdice.dto.UserDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final JwtTokenGenerator jwtTokenGenerator;
+
     public UserService(UserRepository userRepository, ModelMapper modelMapper, JwtTokenGenerator jwtTokenGenerator) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
@@ -28,11 +31,18 @@ public class UserService {
     public UserDTO authenticate(LoginDTO loginDTO) {
         Optional<UserEntity> optionalUserEntity = this.userRepository.findByUsernameAndPassword(loginDTO.getUsername(), loginDTO.getPassword());
 
-        if (optionalUserEntity.isPresent()){
+        if (optionalUserEntity.isPresent()) {
             UserDTO userDTO = modelMapper.map(optionalUserEntity.get(), UserDTO.class);
             userDTO.setToken(this.jwtTokenGenerator.generateToken(userDTO.getUsername()));
             return userDTO;
         }
         throw new AssertionError("username or password incorrect");
+    }
+
+    public List<UserDTO> allUsers() {
+        return this.userRepository.findAll().stream()
+                .map(userEntity -> this.modelMapper.map(userEntity, UserDTO.class))
+                .collect(Collectors.toList());
+
     }
 }

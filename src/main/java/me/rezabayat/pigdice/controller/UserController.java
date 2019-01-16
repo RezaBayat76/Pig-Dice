@@ -5,6 +5,8 @@ import me.rezabayat.pigdice.dto.UserDTO;
 import me.rezabayat.pigdice.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("users")
 @CrossOrigin
@@ -21,8 +23,12 @@ public class UserController {
     }
 
     @PostMapping("authenticate")
-
     public UserDTO authenticate(@RequestBody LoginDTO loginDTO){
         return this.userService.authenticate(loginDTO);
+    }
+
+    @GetMapping
+    public List<UserDTO> users(){
+        return this.userService.allUsers();
     }
 }
