@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Entity
 @Data
 public class PlayedGameCommentEntity {
+
     @Id
     @GeneratedValue
     private Long id;
