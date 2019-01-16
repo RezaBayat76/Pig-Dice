@@ -17,15 +17,15 @@ public class UserEntity {
     @GeneratedValue
     private Long id;
 
-    private String name;
+    private String firstName;
 
-    private String familyName;
+    private String lastName;
 
     private Date birthday;
 
     private String gender;
 
-    private String userName;
+    private String username;
 
     private String password;
 
