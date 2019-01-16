@@ -1,5 +1,6 @@
 package me.rezabayat.pigdice.controller;
 
+import me.rezabayat.pigdice.dto.CommentOnGameDTO;
 import me.rezabayat.pigdice.dto.GameDTO;
 import me.rezabayat.pigdice.service.GameService;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,14 @@ public class GameController {
     public List<GameDTO> games(){
         return this.gameService.games();
     }
+
     @PostMapping("add-game")
     public void addGame(@RequestBody GameDTO gameDTO, @RequestHeader("Authorization") String token){
         this.gameService.addGame(gameDTO, token);
+    }
+
+    @PostMapping("add-comment")
+    public void addComment(@RequestBody CommentOnGameDTO commentOnGameDTO, @RequestHeader("Authorization") String token){
+        this.gameService.addComment(commentOnGameDTO, token);
     }
 }
