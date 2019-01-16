@@ -1,5 +1,6 @@
 package me.rezabayat.pigdice.controller;
 
+import me.rezabayat.pigdice.dto.CommentOnUserDTO;
 import me.rezabayat.pigdice.dto.LoginDTO;
 import me.rezabayat.pigdice.dto.UserCommentDTO;
 import me.rezabayat.pigdice.dto.UserDTO;
@@ -36,5 +37,10 @@ public class UserController {
     @GetMapping("comments/{id}")
     public List<UserCommentDTO> comments(@PathVariable("id") long id){
         return this.userService.commentOnUser(id);
+    }
+
+    @PostMapping("add-comment")
+    public void addComment(@RequestBody CommentOnUserDTO commentOnUserDTO, @RequestHeader("Authorization") String token){
+        this.userService.addComment(commentOnUserDTO, token);
     }
 }

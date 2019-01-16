@@ -1,8 +1,10 @@
 package me.rezabayat.pigdice.service;
 
+import me.rezabayat.pigdice.dal.entity.UserCommentEntity;
 import me.rezabayat.pigdice.dal.entity.UserEntity;
 import me.rezabayat.pigdice.dal.repository.UserCommentRepository;
 import me.rezabayat.pigdice.dal.repository.UserRepository;
+import me.rezabayat.pigdice.dto.CommentOnUserDTO;
 import me.rezabayat.pigdice.dto.LoginDTO;
 import me.rezabayat.pigdice.dto.UserCommentDTO;
 import me.rezabayat.pigdice.dto.UserDTO;
@@ -18,13 +20,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserCommentRepository userCommentRepository;
     private final ModelMapper modelMapper;
-    private final JwtTokenGenerator jwtTokenGenerator;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    public UserService(UserRepository userRepository, UserCommentRepository userCommentRepository, ModelMapper modelMapper, JwtTokenGenerator jwtTokenGenerator) {
+    public UserService(UserRepository userRepository, UserCommentRepository userCommentRepository, ModelMapper modelMapper, JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
         this.userCommentRepository = userCommentRepository;
         this.modelMapper = modelMapper;
-        this.jwtTokenGenerator = jwtTokenGenerator;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     public void createNewUser(UserDTO userDTO) {
@@ -37,7 +39,7 @@ public class UserService {
 
         if (optionalUserEntity.isPresent()) {
             UserDTO userDTO = modelMapper.map(optionalUserEntity.get(), UserDTO.class);
-            userDTO.setToken(this.jwtTokenGenerator.generateToken(userDTO.getUsername()));
+            userDTO.setToken(this.jwtTokenUtil.generateToken(userDTO.getUsername()));
             return userDTO;
         }
         throw new AssertionError("username or password incorrect");
@@ -60,5 +62,24 @@ public class UserService {
         return this.userCommentRepository.findAllByMentionUser(optionalUserEntity.get()).stream().
                 map(userCommentEntity -> this.modelMapper.map(userCommentEntity, UserCommentDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    public void addComment(CommentOnUserDTO commentOnUserDTO, String token) {
+        Optional<UserEntity> optionalUserMention = this.userRepository.findById(commentOnUserDTO.getMentionUserID());
+        if (!optionalUserMention.isPresent()){
+            throw new IllegalArgumentException("Illegal request");
+        }
+
+        Optional<UserEntity> optionalUserCommentCreator = this.userRepository.findByUsername(jwtTokenUtil.getUsername(token));
+
+        if (!optionalUserCommentCreator.isPresent()){
+            throw new IllegalArgumentException("Illegal request");
+        }
+
+        UserCommentEntity userCommentEntity = this.modelMapper.map(commentOnUserDTO, UserCommentEntity.class);
+        userCommentEntity.setMentionUser(optionalUserMention.get());
+        userCommentEntity.setUserCreator(optionalUserCommentCreator.get());
+
+        this.userCommentRepository.save(userCommentEntity);
     }
 }
