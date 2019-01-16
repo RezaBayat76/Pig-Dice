@@ -1,5 +1,6 @@
 package me.rezabayat.pigdice.controller;
 
+import me.rezabayat.pigdice.dto.LoginDTO;
 import me.rezabayat.pigdice.dto.UserDTO;
 import me.rezabayat.pigdice.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -17,5 +18,11 @@ public class UserController {
     @PostMapping("register")
     public void register(@RequestBody UserDTO userDTO){
         this.userService.createNewUser(userDTO);
+    }
+
+    @PostMapping("authenticate")
+
+    public UserDTO authenticate(@RequestBody LoginDTO loginDTO){
+        return this.userService.authenticate(loginDTO);
     }
 }

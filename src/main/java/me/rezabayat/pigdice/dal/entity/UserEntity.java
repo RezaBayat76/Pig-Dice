@@ -25,6 +25,7 @@ public class UserEntity {
 
     private String gender;
 
+    @Column(unique = true)
     private String username;
 
     private String password;
