@@ -1,6 +1,7 @@
 package me.rezabayat.pigdice.controller;
 
 import me.rezabayat.pigdice.dto.LoginDTO;
+import me.rezabayat.pigdice.dto.UserCommentDTO;
 import me.rezabayat.pigdice.dto.UserDTO;
 import me.rezabayat.pigdice.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -30,5 +31,10 @@ public class UserController {
     @GetMapping
     public List<UserDTO> users(){
         return this.userService.allUsers();
+    }
+
+    @GetMapping("comments/{id}")
+    public List<UserCommentDTO> comments(@PathVariable("id") long id){
+        return this.userService.commentOnUser(id);
     }
 }
