@@ -20,22 +20,22 @@ public class GameController {
     }
 
     @GetMapping
-    public List<GameDTO> games(){
+    public List<GameDTO> games() {
         return this.gameService.games();
     }
 
     @PostMapping("add-game")
-    public void addGame(@RequestBody GameDTO gameDTO, @RequestHeader("Authorization") String token){
+    public void addGame(@RequestBody GameDTO gameDTO, @RequestHeader("Authorization") String token) {
         this.gameService.addGame(gameDTO, token);
     }
 
     @PostMapping("add-comment")
-    public void addComment(@RequestBody CommentOnGameDTO commentOnGameDTO, @RequestHeader("Authorization") String token){
+    public void addComment(@RequestBody CommentOnGameDTO commentOnGameDTO, @RequestHeader("Authorization") String token) {
         this.gameService.addComment(commentOnGameDTO, token);
     }
 
     @GetMapping("comments/{id}")
-    public List<GameCommentDTO> comments(@PathVariable("id") long id){
+    public List<GameCommentDTO> comments(@PathVariable("id") long id) {
         return this.gameService.comments(id);
     }
 

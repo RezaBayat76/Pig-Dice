@@ -55,7 +55,7 @@ public class UserService {
     public List<UserCommentDTO> commentOnUser(long id) {
 
         Optional<UserEntity> optionalUserEntity = this.userRepository.findById(id);
-        if (!optionalUserEntity.isPresent()){
+        if (!optionalUserEntity.isPresent()) {
             throw new IllegalArgumentException("Illegal request");
         }
 
@@ -66,13 +66,13 @@ public class UserService {
 
     public void addComment(CommentOnUserDTO commentOnUserDTO, String token) {
         Optional<UserEntity> optionalUserMention = this.userRepository.findById(commentOnUserDTO.getMentionUserID());
-        if (!optionalUserMention.isPresent()){
+        if (!optionalUserMention.isPresent()) {
             throw new IllegalArgumentException("Illegal request");
         }
 
         Optional<UserEntity> optionalUserCommentCreator = this.userRepository.findByUsername(jwtTokenUtil.getUsername(token));
 
-        if (!optionalUserCommentCreator.isPresent()){
+        if (!optionalUserCommentCreator.isPresent()) {
             throw new IllegalArgumentException("Illegal request");
         }
 

@@ -65,7 +65,7 @@ public class GameService {
 
         Optional<GameEntity> optionalGameEntity = this.gameRepository.findById(commentOnGameDTO.getGameId());
 
-        if (!optionalGameEntity.isPresent()){
+        if (!optionalGameEntity.isPresent()) {
             throw new IllegalArgumentException("Illegal request");
         }
 
@@ -80,7 +80,7 @@ public class GameService {
     public List<GameCommentDTO> comments(long id) {
         Optional<GameEntity> optionalGames = this.gameRepository.findById(id);
 
-        if (!optionalGames.isPresent()){
+        if (!optionalGames.isPresent()) {
             throw new IllegalArgumentException("Illegal request");
         }
 

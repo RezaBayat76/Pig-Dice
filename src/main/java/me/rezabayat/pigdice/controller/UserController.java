@@ -20,27 +20,27 @@ public class UserController {
     }
 
     @PostMapping("register")
-    public void register(@RequestBody UserDTO userDTO){
+    public void register(@RequestBody UserDTO userDTO) {
         this.userService.createNewUser(userDTO);
     }
 
     @PostMapping("authenticate")
-    public UserDTO authenticate(@RequestBody LoginDTO loginDTO){
+    public UserDTO authenticate(@RequestBody LoginDTO loginDTO) {
         return this.userService.authenticate(loginDTO);
     }
 
     @GetMapping
-    public List<UserDTO> users(){
+    public List<UserDTO> users() {
         return this.userService.allUsers();
     }
 
     @GetMapping("comments/{id}")
-    public List<UserCommentDTO> comments(@PathVariable("id") long id){
+    public List<UserCommentDTO> comments(@PathVariable("id") long id) {
         return this.userService.commentOnUser(id);
     }
 
     @PostMapping("add-comment")
-    public void addComment(@RequestBody CommentOnUserDTO commentOnUserDTO, @RequestHeader("Authorization") String token){
+    public void addComment(@RequestBody CommentOnUserDTO commentOnUserDTO, @RequestHeader("Authorization") String token) {
         this.userService.addComment(commentOnUserDTO, token);
     }
 }
