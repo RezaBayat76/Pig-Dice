@@ -43,4 +43,19 @@ public class UserController {
     public void addComment(@RequestBody CommentOnUserDTO commentOnUserDTO, @RequestHeader("Authorization") String token) {
         this.userService.addComment(commentOnUserDTO, token);
     }
+
+    @GetMapping("follow/{id}")
+    public void follow(@PathVariable("id") long id, @RequestHeader("Authorization") String token){
+        this.userService.follow(id, token);
+    }
+
+    @GetMapping("unfollow/{id}")
+    public void unFollow(@PathVariable("id") long id, @RequestHeader("Authorization") String token){
+        this.userService.unFollow(id, token);
+    }
+
+    @GetMapping("followings")
+    public List<Long> followings(@RequestHeader("Authorization") String token){
+        return this.userService.followings(token);
+    }
 }

@@ -40,4 +40,12 @@ public class UserEntity {
     @OneToMany(mappedBy = "mentionUser")
     @JsonBackReference
     private List<UserCommentEntity> userComments;
+
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    private List<FollowingEntity> followings;
+
+    @OneToMany(mappedBy = "followedUser")
+    @JsonBackReference
+    private List<FollowingEntity> followers;
 }
