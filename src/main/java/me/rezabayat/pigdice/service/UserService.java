@@ -19,19 +19,24 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final UserCommentRepository userCommentRepository;
+    private final WebSocketSender webSocketSender;
     private final ModelMapper modelMapper;
     private final JwtTokenUtil jwtTokenUtil;
 
-    public UserService(UserRepository userRepository, UserCommentRepository userCommentRepository, ModelMapper modelMapper, JwtTokenUtil jwtTokenUtil) {
+    public UserService(UserRepository userRepository, UserCommentRepository userCommentRepository, WebSocketSender webSocketSender, ModelMapper modelMapper, JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
         this.userCommentRepository = userCommentRepository;
+        this.webSocketSender = webSocketSender;
         this.modelMapper = modelMapper;
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
     public void createNewUser(UserDTO userDTO) {
+        if (this.userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("username is exist");
+        }
         UserEntity userEntity = this.modelMapper.map(userDTO, UserEntity.class);
-        this.userRepository.save(userEntity);
+        this.webSocketSender.sendNewUserToAll(this.modelMapper.map(this.userRepository.save(userEntity), UserDTO.class));
     }
 
     public UserDTO authenticate(LoginDTO loginDTO) {
