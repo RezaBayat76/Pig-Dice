@@ -48,6 +48,9 @@ public class UserService {
         Optional<UserEntity> optionalUserEntity = this.userRepository.findByUsernameAndPassword(loginDTO.getUsername(), loginDTO.getPassword());
 
         if (optionalUserEntity.isPresent()) {
+            if (this.webSocketSender.isLogin(optionalUserEntity.get().getId())) {
+                throw new AssertionError("Already logged in");
+            }
             UserDTO userDTO = modelMapper.map(optionalUserEntity.get(), UserDTO.class);
             userDTO.setToken(this.jwtTokenUtil.generateToken(userDTO.getUsername()));
             return userDTO;

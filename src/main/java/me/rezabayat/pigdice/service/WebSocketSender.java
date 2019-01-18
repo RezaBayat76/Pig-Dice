@@ -5,9 +5,7 @@ import me.rezabayat.pigdice.dto.UsersDTO;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,7 +67,7 @@ public class WebSocketSender {
         try {
             List<UserDTO> users = this.onlineUsers.values().stream().collect(Collectors.toList());
             System.out.println(users);
-            if (!users.isEmpty()){
+            if (!users.isEmpty()) {
                 UsersDTO usersDTO = new UsersDTO();
                 usersDTO.setUsers(users);
                 this.messagingTemplate.convertAndSendToUser(sessionId, "/user/online-users", usersDTO);
@@ -78,5 +76,9 @@ public class WebSocketSender {
         } catch (Exception ignore) {
 
         }
+    }
+
+    public boolean isLogin(Long id) {
+        return this.onlineUsers.values().stream().anyMatch(userDTO -> Objects.equals(userDTO.getId(), id));
     }
 }
