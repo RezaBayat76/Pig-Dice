@@ -30,6 +30,8 @@ public class UserEntity {
 
     private String password;
 
+    private String email;
+
     @Enumerated
     private Role role;
 

@@ -6,10 +6,7 @@ import me.rezabayat.pigdice.dal.entity.UserEntity;
 import me.rezabayat.pigdice.dal.repository.FollowingRepository;
 import me.rezabayat.pigdice.dal.repository.UserCommentRepository;
 import me.rezabayat.pigdice.dal.repository.UserRepository;
-import me.rezabayat.pigdice.dto.CommentOnUserDTO;
-import me.rezabayat.pigdice.dto.LoginDTO;
-import me.rezabayat.pigdice.dto.UserCommentDTO;
-import me.rezabayat.pigdice.dto.UserDTO;
+import me.rezabayat.pigdice.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,5 +138,33 @@ public class UserService {
         }
 
         this.followingRepository.deleteByUserAndFollowedUser(optionalUserEntity.get(), optionalUser.get());
+    }
+
+    public UserProfileDTO profile(String token) {
+        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUsername(jwtTokenUtil.getUsername(token));
+
+        if (!optionalUserEntity.isPresent()) {
+            throw new IllegalArgumentException("Illegal request");
+        }
+
+        UserProfileDTO userProfileDTO = this.modelMapper.map(optionalUserEntity.get(), UserProfileDTO.class);
+        userProfileDTO.setFollowings(optionalUserEntity.get().getFollowings().stream().map(followingEntity -> this.modelMapper.map(followingEntity.getFollowedUser(), UserDTO.class)).collect(Collectors.toList()));
+        userProfileDTO.setFollowers(optionalUserEntity.get().getFollowers().stream().map(followingEntity -> this.modelMapper.map(followingEntity.getUser(), UserDTO.class)).collect(Collectors.toList()));
+
+        return userProfileDTO;
+    }
+
+    public void editProfile(UserDTO userDTO) {
+        Optional<UserEntity> optionalUserEntity = this.userRepository.findById(userDTO.getId());
+
+        if (!optionalUserEntity.isPresent()) {
+            throw new IllegalArgumentException("Illegal request");
+        }
+
+        UserEntity userEntity = optionalUserEntity.get();
+
+        this.modelMapper.map(userDTO, userEntity);
+
+        this.userRepository.save(userEntity);
     }
 }

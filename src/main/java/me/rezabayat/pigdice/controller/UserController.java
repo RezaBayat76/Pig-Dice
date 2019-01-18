@@ -1,9 +1,6 @@
 package me.rezabayat.pigdice.controller;
 
-import me.rezabayat.pigdice.dto.CommentOnUserDTO;
-import me.rezabayat.pigdice.dto.LoginDTO;
-import me.rezabayat.pigdice.dto.UserCommentDTO;
-import me.rezabayat.pigdice.dto.UserDTO;
+import me.rezabayat.pigdice.dto.*;
 import me.rezabayat.pigdice.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,5 +54,15 @@ public class UserController {
     @GetMapping("followings")
     public List<Long> followings(@RequestHeader("Authorization") String token){
         return this.userService.followings(token);
+    }
+
+    @GetMapping("profile")
+    public UserProfileDTO profile(@RequestHeader("Authorization") String token){
+        return this.userService.profile(token);
+    }
+
+    @PutMapping("edit-profile")
+    public void editProfile(@RequestBody UserDTO userDTO){
+        this.userService.editProfile(userDTO);
     }
 }

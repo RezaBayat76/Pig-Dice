@@ -1,6 +1,5 @@
 package me.rezabayat.pigdice.dal.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
