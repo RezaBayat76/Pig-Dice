@@ -1,7 +1,10 @@
 package me.rezabayat.pigdice.dto;
 
+import lombok.Data;
+
 import java.util.Date;
 
+@Data
 public class PlayedGameDTO {
 
     private Long id;

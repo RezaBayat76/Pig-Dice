@@ -28,17 +28,17 @@ public class PlayedGameController {
     }
 
     @GetMapping("play-game/{id}")
-    public void playGame(@PathVariable("id") long id, @RequestHeader("Authorization") String token){
+    public void playGame(@PathVariable("id") long id, @RequestHeader("Authorization") String token) {
         this.playedGameService.playGame(id, token);
     }
 
-    @GetMapping("roll-dice/{id}")
-    public List<Long> rollDice(@PathVariable("id") long id){
-        return this.playedGameService.rollDice(id);
+    @GetMapping("roll-dice/{playedGameId}")
+    public void rollDice(@PathVariable("playedGameId") long id, @RequestHeader("Authorization") String token) {
+         this.playedGameService.rollDice(id, token);
     }
 
     @GetMapping("hold/{playedGameId}")
-    public void hold(@PathVariable("playedGameId") long playedGameId, @RequestHeader("Authorization") String token){
+    public void hold(@PathVariable("playedGameId") long playedGameId, @RequestHeader("Authorization") String token) {
         this.playedGameService.hold(playedGameId, token);
     }
 

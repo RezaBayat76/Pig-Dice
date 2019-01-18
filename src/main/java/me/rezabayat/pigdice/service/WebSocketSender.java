@@ -7,6 +7,7 @@ import me.rezabayat.pigdice.dto.GameDTO;
 import me.rezabayat.pigdice.dto.PlayedGameDTO;
 import me.rezabayat.pigdice.dto.UserDTO;
 import me.rezabayat.pigdice.dto.UsersDTO;
+import me.rezabayat.pigdice.service.playinggame.GamePlayingInfo;
 import org.modelmapper.ModelMapper;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -116,9 +117,12 @@ public class WebSocketSender {
         try {
             Map.Entry<String, UserDTO> first = getOnlineUser(firstPlayer.getId());
             Map.Entry<String, UserDTO> second = getOnlineUser(secondPlayer.getId());
+            System.out.println(first);
+            System.out.println(second);
             if (first != null) {
                 if (second != null) {
                     PlayedGameDTO playedGameDTO = this.modelMapper.map(playedGameEntity, PlayedGameDTO.class);
+                    System.out.println(playedGameDTO);
                     this.messagingTemplate.convertAndSendToUser(first.getKey(), "/user/game-start", playedGameDTO);
                     this.messagingTemplate.convertAndSendToUser(second.getKey(), "/user/game-start", playedGameDTO);
 
@@ -148,6 +152,29 @@ public class WebSocketSender {
             }
         } else if (active != null) {
             this.messagingTemplate.convertAndSendToUser(active.getKey(), "/user/kill", "Competitor disconnected");
+        }
+    }
+
+
+    public void notifyGameInfo(Long firstPlayer, Long secondPlayer, GamePlayingInfo gameInfo) {
+        try {
+            System.out.println("send Game Info");
+            Map.Entry<String, UserDTO> firstUser = getOnlineUser(firstPlayer);
+            Map.Entry<String, UserDTO> secondUser = getOnlineUser(secondPlayer);
+            if (firstUser != null) {
+                if (secondUser != null) {
+                    this.messagingTemplate.convertAndSendToUser(firstUser.getKey(), "/user/game-info", gameInfo);
+                    this.messagingTemplate.convertAndSendToUser(secondUser.getKey(), "/user/game-info", gameInfo);
+
+                } else {
+                    this.messagingTemplate.convertAndSendToUser(firstUser.getKey(), "/user/kill", "Competitor disconnected");
+
+                }
+            } else if (secondUser != null) {
+                this.messagingTemplate.convertAndSendToUser(secondUser.getKey(), "/user/kill", "Competitor disconnected");
+            }
+        } catch (Exception ignore) {
+
         }
     }
 }

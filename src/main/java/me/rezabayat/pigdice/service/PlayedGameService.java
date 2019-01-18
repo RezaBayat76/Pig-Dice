@@ -11,13 +11,10 @@ import me.rezabayat.pigdice.dal.repository.UserRepository;
 import me.rezabayat.pigdice.dto.CommentOnPlayedGame;
 import me.rezabayat.pigdice.dto.PlayedGameCommentDTO;
 import me.rezabayat.pigdice.service.playinggame.GameHandlerService;
-import me.rezabayat.pigdice.service.playinggame.GamePlayingService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -77,18 +74,18 @@ public class PlayedGameService {
                 .collect(Collectors.toList());
     }
 
-    public List<Long> rollDice(long id) {
-        Optional<GameEntity> optionalGame = this.gameRepository.findById(id);
+    public void rollDice(long id, String token) {
 
-        if (!optionalGame.isPresent()) {
+        String username = this.jwtTokenUtil.getUsername(token);
+
+        Optional<UserEntity> optionalUser = this.userRepository.findByUsername(username);
+
+        if (!optionalUser.isPresent()) {
             throw new IllegalArgumentException("Illegal request");
         }
 
-        List<Long> rollDices = new ArrayList<>();
-        for (int i = 0; i < optionalGame.get().getNumDice(); i++) {
-            rollDices.add((long) (Math.random() * 6 + 1));
-        }
-        return rollDices;
+
+        this.gameHandlerService.rollDice(optionalUser.get(), id);
     }
 
     public void playGame(long gameId, String token) {
@@ -117,12 +114,6 @@ public class PlayedGameService {
             throw new IllegalArgumentException("Illegal request");
         }
 
-        Optional<PlayedGameEntity> playedGameEntity = this.playedGameRepository.findById(playedGameId);
-
-        if (!playedGameEntity.isPresent()){
-            throw new IllegalArgumentException("Illegal request");
-        }
-
-        this.gameHandlerService.hold(playedGameEntity.get(), optionalUser.get());
+        this.gameHandlerService.hold(playedGameId, optionalUser.get());
     }
 }
