@@ -28,4 +28,8 @@ public class PlayedGameController {
         return this.playedGameService.comments(id);
     }
 
+    @GetMapping("roll-dice/{id}")
+    public List<Long> rollDice(@PathVariable("id") long id){
+        return this.playedGameService.rollDice(id);
+    }
 }
