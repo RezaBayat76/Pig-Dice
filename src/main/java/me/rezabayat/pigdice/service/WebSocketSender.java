@@ -119,8 +119,8 @@ public class WebSocketSender {
             if (first != null) {
                 if (second != null) {
                     PlayedGameDTO playedGameDTO = this.modelMapper.map(playedGameEntity, PlayedGameDTO.class);
-                    this.messagingTemplate.convertAndSendToUser(first.getKey(), "/user/start", playedGameDTO);
-                    this.messagingTemplate.convertAndSendToUser(second.getKey(), "/user/start", playedGameDTO);
+                    this.messagingTemplate.convertAndSendToUser(first.getKey(), "/user/game-start", playedGameDTO);
+                    this.messagingTemplate.convertAndSendToUser(second.getKey(), "/user/game-start", playedGameDTO);
 
                 } else {
                     this.messagingTemplate.convertAndSendToUser(first.getKey(), "/user/kill", "Competitor disconnected");
@@ -131,6 +131,23 @@ public class WebSocketSender {
             }
         } catch (Exception ignore) {
 
+        }
+    }
+
+    public void notifyHold(Long holdPlayer, Long activePlayer) {
+        Map.Entry<String, UserDTO> hold = getOnlineUser(holdPlayer);
+        Map.Entry<String, UserDTO> active = getOnlineUser(activePlayer);
+        if (hold != null) {
+            if (active != null) {
+                this.messagingTemplate.convertAndSendToUser(hold.getKey(), "/user/hold", false);
+                this.messagingTemplate.convertAndSendToUser(active.getKey(), "/user/hold", true);
+
+            } else {
+                this.messagingTemplate.convertAndSendToUser(hold.getKey(), "/user/kill", "Competitor disconnected");
+
+            }
+        } else if (active != null) {
+            this.messagingTemplate.convertAndSendToUser(active.getKey(), "/user/kill", "Competitor disconnected");
         }
     }
 }

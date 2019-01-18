@@ -37,4 +37,9 @@ public class PlayedGameController {
         return this.playedGameService.rollDice(id);
     }
 
+    @GetMapping("hold/{playedGameId}")
+    public void hold(@PathVariable("playedGameId") long playedGameId, @RequestHeader("Authorization") String token){
+        this.playedGameService.hold(playedGameId, token);
+    }
+
 }

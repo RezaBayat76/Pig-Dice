@@ -107,4 +107,22 @@ public class PlayedGameService {
 
         this.gameHandlerService.play(optionalUser.get(), optionalGame.get());
     }
+
+    public void hold(long playedGameId, String token) {
+        String username = this.jwtTokenUtil.getUsername(token);
+
+        Optional<UserEntity> optionalUser = this.userRepository.findByUsername(username);
+
+        if (!optionalUser.isPresent()) {
+            throw new IllegalArgumentException("Illegal request");
+        }
+
+        Optional<PlayedGameEntity> playedGameEntity = this.playedGameRepository.findById(playedGameId);
+
+        if (!playedGameEntity.isPresent()){
+            throw new IllegalArgumentException("Illegal request");
+        }
+
+        this.gameHandlerService.hold(playedGameEntity.get(), optionalUser.get());
+    }
 }

@@ -24,6 +24,19 @@ public class GameHandlerService {
         this.playedGameRepository = playedGameRepository;
     }
 
+    public PlayedGameEntity addGame(GameEntity gameEntity, UserEntity firstPlayer, UserEntity secondPlayer) {
+
+        PlayedGameEntity playedGameEntity = new PlayedGameEntity();
+        playedGameEntity.setGame(gameEntity);
+        playedGameEntity.setFirstPlayer(firstPlayer);
+        playedGameEntity.setSecondPlayer(secondPlayer);
+        playedGameEntity.setCreateDate(new Date());
+
+        this.playedGameRepository.save(playedGameEntity);
+
+        return playedGameEntity;
+    }
+
     public void play(UserEntity userEntity, GameEntity gameEntity) {
         if (pendingGames.containsKey(gameEntity.getId())) {
             GamePlayingService pendingGame = pendingGames.remove(gameEntity.getId());
@@ -44,16 +57,12 @@ public class GameHandlerService {
         }
     }
 
-    public PlayedGameEntity addGame(GameEntity gameEntity, UserEntity firstPlayer, UserEntity secondPlayer) {
+    public void hold(PlayedGameEntity playedGameEntity, UserEntity userEntity) {
+        if (userEntity.getId() == playedGameEntity.getFirstPlayer().getId()) {
+            this.webSocketSender.notifyHold(userEntity.getId(), playedGameEntity.getSecondPlayer().getId());
+        } else {
+            this.webSocketSender.notifyHold(playedGameEntity.getSecondPlayer().getId(), userEntity.getId());
 
-        PlayedGameEntity playedGameEntity = new PlayedGameEntity();
-        playedGameEntity.setGame(gameEntity);
-        playedGameEntity.setFirstPlayer(firstPlayer);
-        playedGameEntity.setSecondPlayer(secondPlayer);
-        playedGameEntity.setCreateDate(new Date());
-
-        this.playedGameRepository.save(playedGameEntity);
-
-        return playedGameEntity;
+        }
     }
 }
