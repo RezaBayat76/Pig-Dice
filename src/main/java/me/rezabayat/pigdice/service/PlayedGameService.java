@@ -9,9 +9,9 @@ import me.rezabayat.pigdice.dal.repository.PlayedGameCommentRepository;
 import me.rezabayat.pigdice.dal.repository.PlayedGameRepository;
 import me.rezabayat.pigdice.dal.repository.UserRepository;
 import me.rezabayat.pigdice.dto.CommentOnPlayedGame;
-import me.rezabayat.pigdice.dto.GameDTO;
 import me.rezabayat.pigdice.dto.PlayedGameCommentDTO;
-import me.rezabayat.pigdice.dto.UserDTO;
+import me.rezabayat.pigdice.service.playinggame.GameHandlerService;
+import me.rezabayat.pigdice.service.playinggame.GamePlayingService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,42 +31,16 @@ public class PlayedGameService {
     private final UserRepository userRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final ModelMapper modelMapper;
+    private final GameHandlerService gameHandlerService;
 
-    public PlayedGameService(PlayedGameRepository playedGameRepository, PlayedGameCommentRepository playedGameCommentRepository, GameRepository gameRepository, UserRepository userRepository, JwtTokenUtil jwtTokenUtil, ModelMapper modelMapper) {
+    public PlayedGameService(PlayedGameRepository playedGameRepository, PlayedGameCommentRepository playedGameCommentRepository, GameRepository gameRepository, UserRepository userRepository, JwtTokenUtil jwtTokenUtil, ModelMapper modelMapper, GameHandlerService gameHandlerService) {
         this.playedGameRepository = playedGameRepository;
         this.playedGameCommentRepository = playedGameCommentRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.jwtTokenUtil = jwtTokenUtil;
         this.modelMapper = modelMapper;
-    }
-
-    public PlayedGameEntity addGame(GameDTO gameDTO, UserDTO firstPlayer, UserDTO secondPlayer) {
-
-        Optional<GameEntity> optionalGameEntity = this.gameRepository.findById(gameDTO.getId());
-        if (!optionalGameEntity.isPresent()) {
-            throw new IllegalArgumentException("Illegal request");
-        }
-
-        Optional<UserEntity> optionalFirstPlayer = this.userRepository.findById(firstPlayer.getId());
-        if (!optionalFirstPlayer.isPresent()) {
-            throw new IllegalArgumentException("Illegal request");
-        }
-
-        Optional<UserEntity> optionalSecondPlayer = this.userRepository.findById(secondPlayer.getId());
-        if (!optionalSecondPlayer.isPresent()) {
-            throw new IllegalArgumentException("Illegal request");
-        }
-
-        PlayedGameEntity playedGameEntity = new PlayedGameEntity();
-        playedGameEntity.setGame(optionalGameEntity.get());
-        playedGameEntity.setFirstPlayer(optionalFirstPlayer.get());
-        playedGameEntity.setSecondPlayer(optionalSecondPlayer.get());
-        playedGameEntity.setCreateDate(new Date());
-
-        this.playedGameRepository.save(playedGameEntity);
-
-        return playedGameEntity;
+        this.gameHandlerService = gameHandlerService;
     }
 
     public void addComment(CommentOnPlayedGame commentOnPlayedGame, String token) {
@@ -115,5 +89,22 @@ public class PlayedGameService {
             rollDices.add((long) (Math.random() * 6 + 1));
         }
         return rollDices;
+    }
+
+    public void playGame(long gameId, String token) {
+        String username = this.jwtTokenUtil.getUsername(token);
+
+        Optional<UserEntity> optionalUser = this.userRepository.findByUsername(username);
+
+        if (!optionalUser.isPresent()) {
+            throw new IllegalArgumentException("Illegal request");
+        }
+
+        Optional<GameEntity> optionalGame = this.gameRepository.findById(gameId);
+        if (!optionalGame.isPresent()) {
+            throw new IllegalArgumentException("Illegal request");
+        }
+
+        this.gameHandlerService.play(optionalUser.get(), optionalGame.get());
     }
 }

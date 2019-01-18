@@ -27,8 +27,14 @@ public class PlayedGameController {
         return this.playedGameService.comments(id);
     }
 
+    @GetMapping("play-game/{id}")
+    public void playGame(@PathVariable("id") long id, @RequestHeader("Authorization") String token){
+        this.playedGameService.playGame(id, token);
+    }
+
     @GetMapping("roll-dice/{id}")
     public List<Long> rollDice(@PathVariable("id") long id){
         return this.playedGameService.rollDice(id);
     }
+
 }
