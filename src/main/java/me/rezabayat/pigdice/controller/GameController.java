@@ -38,4 +38,8 @@ public class GameController {
         return this.gameService.comments(id);
     }
 
+    @GetMapping("{id}")
+    public GameDTO getGame(@PathVariable("id") long id) {
+        return this.gameService.getGame(id);
+    }
 }

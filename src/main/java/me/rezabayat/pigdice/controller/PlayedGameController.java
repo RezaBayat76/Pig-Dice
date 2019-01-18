@@ -1,7 +1,6 @@
 package me.rezabayat.pigdice.controller;
 
 import me.rezabayat.pigdice.dto.CommentOnPlayedGame;
-import me.rezabayat.pigdice.dto.GameCommentDTO;
 import me.rezabayat.pigdice.dto.PlayedGameCommentDTO;
 import me.rezabayat.pigdice.service.PlayedGameService;
 import org.springframework.web.bind.annotation.*;
@@ -28,4 +27,8 @@ public class PlayedGameController {
         return this.playedGameService.comments(id);
     }
 
+    @GetMapping("roll-dice/{id}")
+    public List<Long> rollDice(@PathVariable("id") long id){
+        return this.playedGameService.rollDice(id);
+    }
 }

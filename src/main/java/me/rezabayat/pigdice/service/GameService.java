@@ -88,4 +88,14 @@ public class GameService {
                 .map(gameCommentEntity -> this.modelMapper.map(gameCommentEntity, GameCommentDTO.class))
                 .collect(Collectors.toList());
     }
+
+    public GameDTO getGame(long id) {
+        Optional<GameEntity> optionalGame = this.gameRepository.findById(id);
+
+        if (!optionalGame.isPresent()) {
+            throw new IllegalArgumentException("Game not found");
+        }
+
+        return this.modelMapper.map(optionalGame.get(), GameDTO.class);
+    }
 }
