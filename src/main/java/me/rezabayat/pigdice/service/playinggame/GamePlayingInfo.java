@@ -9,6 +9,8 @@ import java.util.Map;
 public class GamePlayingInfo {
 
     private Map<Long, UserGameInfo> playersGameInfo = new HashMap<>();
+    private long playedGameId;
+    private long gameId;
 }
 
 

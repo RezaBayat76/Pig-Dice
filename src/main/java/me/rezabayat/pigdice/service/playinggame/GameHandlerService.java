@@ -3,6 +3,7 @@ package me.rezabayat.pigdice.service.playinggame;
 import me.rezabayat.pigdice.dal.entity.GameEntity;
 import me.rezabayat.pigdice.dal.entity.PlayedGameEntity;
 import me.rezabayat.pigdice.dal.entity.UserEntity;
+import me.rezabayat.pigdice.dal.repository.GameRepository;
 import me.rezabayat.pigdice.dal.repository.PlayedGameRepository;
 import me.rezabayat.pigdice.service.WebSocketSender;
 import org.springframework.stereotype.Service;
@@ -15,12 +16,14 @@ import java.util.stream.Collectors;
 public class GameHandlerService {
     private final WebSocketSender webSocketSender;
     private final PlayedGameRepository playedGameRepository;
+    private final GameRepository gameRepository;
     private Map<Long, GamePlayingService> pendingGames = new HashMap<>();
     private Map<Long, GamePlayingService> onlineGames = new HashMap<>();
 
-    public GameHandlerService(WebSocketSender webSocketSender, PlayedGameRepository playedGameRepository) {
+    public GameHandlerService(WebSocketSender webSocketSender, PlayedGameRepository playedGameRepository, GameRepository gameRepository) {
         this.webSocketSender = webSocketSender;
         this.playedGameRepository = playedGameRepository;
+        this.gameRepository = gameRepository;
     }
 
     public PlayedGameEntity addGame(GameEntity gameEntity, UserEntity firstPlayer, UserEntity secondPlayer) {
@@ -43,12 +46,16 @@ public class GameHandlerService {
 
             PlayedGameEntity playedGameEntity = addGame(gameEntity, pendingGame.getFirstPlayer(), pendingGame.getSecondPlayer());
             pendingGame.setPlayedGameEntity(playedGameEntity);
+
             onlineGames.put(playedGameEntity.getId(), pendingGame);
             GamePlayingInfo gamePlayingInfo = new GamePlayingInfo();
+            gamePlayingInfo.setPlayedGameId(playedGameEntity.getId());
+            gamePlayingInfo.setGameId(gameEntity.getId());
             UserGameInfo firstUserGameInfo = new UserGameInfo(true);
             UserGameInfo secondUserGameInfo = new UserGameInfo(false);
             gamePlayingInfo.getPlayersGameInfo().put(pendingGame.getFirstPlayer().getId(), firstUserGameInfo);
             gamePlayingInfo.getPlayersGameInfo().put(pendingGame.getSecondPlayer().getId(), secondUserGameInfo);
+
 
             pendingGame.setGameInfo(gamePlayingInfo);
 
@@ -81,6 +88,8 @@ public class GameHandlerService {
                 PlayedGameEntity entity = playedGameEntity.get();
                 entity.setWinner(userEntity);
                 this.playedGameRepository.save(entity);
+                gamePlayingService.getGame().setNumPlayed(gamePlayingService.getGame().getNumPlayed() == null ? 1 : gamePlayingService.getGame().getNumPlayed() + 1);
+                this.gameRepository.save(gamePlayingService.getGame());
             }
         }
 
@@ -131,6 +140,8 @@ public class GameHandlerService {
                         PlayedGameEntity entity = playedGameEntity.get();
                         entity.setWinner(userEntity);
                         this.playedGameRepository.save(entity);
+                        gamePlayingService.getGame().setNumPlayed(gamePlayingService.getGame().getNumPlayed() == null ? 1 : gamePlayingService.getGame().getNumPlayed() + 1);
+                        this.gameRepository.save(gamePlayingService.getGame());
                     }
                 }
             }

@@ -3,6 +3,7 @@ package me.rezabayat.pigdice.controller;
 import me.rezabayat.pigdice.dto.CommentOnGameDTO;
 import me.rezabayat.pigdice.dto.GameCommentDTO;
 import me.rezabayat.pigdice.dto.GameDTO;
+import me.rezabayat.pigdice.dto.UpdatedScoreDTO;
 import me.rezabayat.pigdice.service.GameService;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,5 +42,25 @@ public class GameController {
     @GetMapping("{id}")
     public GameDTO getGame(@PathVariable("id") long id) {
         return this.gameService.getGame(id);
+    }
+
+    @GetMapping("best-games")
+    public List<GameDTO> bestGames() {
+        return this.gameService.bestGames();
+    }
+
+    @GetMapping("most-playing")
+    public List<GameDTO> mostPlaying() {
+        return this.gameService.mostPlaying();
+    }
+
+    @GetMapping("best-recently")
+    public List<GameDTO> bestRecently() {
+        return this.gameService.bestRecently();
+    }
+
+    @PostMapping("update-score")
+    public void updateGameScore( @RequestBody UpdatedScoreDTO updatedScoreDTO) {
+        this.gameService.updateScore(updatedScoreDTO);
     }
 }
