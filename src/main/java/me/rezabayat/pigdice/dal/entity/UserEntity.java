@@ -32,7 +32,7 @@ public class UserEntity {
 
     private String email;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "userCreator")

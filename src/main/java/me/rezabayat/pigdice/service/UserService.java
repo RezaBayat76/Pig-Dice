@@ -7,6 +7,7 @@ import me.rezabayat.pigdice.dal.repository.FollowingRepository;
 import me.rezabayat.pigdice.dal.repository.UserCommentRepository;
 import me.rezabayat.pigdice.dal.repository.UserRepository;
 import me.rezabayat.pigdice.dto.*;
+import me.rezabayat.pigdice.enums.Role;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,7 @@ public class UserService {
             throw new IllegalArgumentException("username is exist");
         }
         UserEntity userEntity = this.modelMapper.map(userDTO, UserEntity.class);
+        userEntity.setRole(Role.USER);
         this.webSocketSender.sendNewUserToAll(this.modelMapper.map(this.userRepository.save(userEntity), UserDTO.class));
     }
 
