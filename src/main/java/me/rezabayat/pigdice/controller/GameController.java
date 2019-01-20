@@ -1,9 +1,6 @@
 package me.rezabayat.pigdice.controller;
 
-import me.rezabayat.pigdice.dto.CommentOnGameDTO;
-import me.rezabayat.pigdice.dto.GameCommentDTO;
-import me.rezabayat.pigdice.dto.GameDTO;
-import me.rezabayat.pigdice.dto.UpdatedScoreDTO;
+import me.rezabayat.pigdice.dto.*;
 import me.rezabayat.pigdice.service.GameService;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,7 +57,22 @@ public class GameController {
     }
 
     @PostMapping("update-score")
-    public void updateGameScore( @RequestBody UpdatedScoreDTO updatedScoreDTO) {
+    public void updateGameScore(@RequestBody UpdatedScoreDTO updatedScoreDTO) {
         this.gameService.updateScore(updatedScoreDTO);
+    }
+
+    @GetMapping("unchecked-comments")
+    public List<GameCommentDTO> uncheckedComments(){
+        return this.gameService.uncheckedComments();
+    }
+
+    @GetMapping("accept-comment/{id}")
+    public void acceptComments(@PathVariable("id") long id){
+        this.gameService.acceptComments(id);
+    }
+
+    @GetMapping("decline-comment/{id}")
+    public void declineComment(@PathVariable("id") long id){
+        this.gameService.declineComment(id);
     }
 }

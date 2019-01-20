@@ -65,4 +65,20 @@ public class UserController {
     public void editProfile(@RequestBody UserDTO userDTO){
         this.userService.editProfile(userDTO);
     }
+
+    @GetMapping("unchecked-comments")
+    public List<UserCommentDTO> uncheckedComments(){
+        return this.userService.uncheckedComments();
+    }
+
+
+    @GetMapping("accept-comment/{id}")
+    public void acceptComments(@PathVariable("id") long id){
+        this.userService.acceptComments(id);
+    }
+
+    @GetMapping("decline-comment/{id}")
+    public void declineComment(@PathVariable("id") long id){
+        this.userService.declineComment(id);
+    }
 }

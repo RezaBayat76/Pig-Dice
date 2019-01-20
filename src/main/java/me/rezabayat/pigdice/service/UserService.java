@@ -167,4 +167,27 @@ public class UserService {
 
         this.userRepository.save(userEntity);
     }
+
+    public List<UserCommentDTO> uncheckedComments() {
+        List<UserCommentEntity> userCommentEntities = this.userCommentRepository.uncheckedComments();
+        return userCommentEntities.stream().map(userCommentEntity -> this.modelMapper.map(userCommentEntity, UserCommentDTO.class)).collect(Collectors.toList());
+    }
+
+    public void acceptComments(long id) {
+        Optional<UserCommentEntity> optional = this.userCommentRepository.findById(id);
+        if (!optional.isPresent()) {
+            throw new IllegalArgumentException("Comment not found");
+        }
+        optional.get().setAccepted(true);
+        this.userCommentRepository.save(optional.get());
+    }
+
+    public void declineComment(long id) {
+        Optional<UserCommentEntity> optional = this.userCommentRepository.findById(id);
+        if (!optional.isPresent()) {
+            throw new IllegalArgumentException("Comment not found");
+        }
+        optional.get().setAccepted(false);
+        this.userCommentRepository.save(optional.get());
+    }
 }

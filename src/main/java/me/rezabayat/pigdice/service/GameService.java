@@ -91,7 +91,7 @@ public class GameService {
             throw new IllegalArgumentException("Illegal request");
         }
 
-        return optionalGames.get().getGameComments().stream()
+        return optionalGames.get().getGameComments().stream().filter(GameCommentEntity::getAccepted)
                 .map(gameCommentEntity -> this.modelMapper.map(gameCommentEntity, GameCommentDTO.class))
                 .collect(Collectors.toList());
     }
@@ -150,5 +150,28 @@ public class GameService {
         this.gameRepository.save(gameEntity);
         this.playedGameRepository.save(playedGameEntity);
 
+    }
+
+    public List<GameCommentDTO> uncheckedComments() {
+        List<GameCommentEntity> allUncheckedComments = this.gameCommentRepository.findAllUncheckedComments();
+        return allUncheckedComments.stream().map(gameCommentEntity -> this.modelMapper.map(gameCommentEntity, GameCommentDTO.class)).collect(Collectors.toList());
+    }
+
+    public void acceptComments(long id) {
+        Optional<GameCommentEntity> optional = this.gameCommentRepository.findById(id);
+        if (!optional.isPresent()){
+            throw new IllegalArgumentException("Comment not found");
+        }
+        optional.get().setAccepted(true);
+        this.gameCommentRepository.save(optional.get());
+    }
+
+    public void declineComment(long id) {
+        Optional<GameCommentEntity> optional = this.gameCommentRepository.findById(id);
+        if (!optional.isPresent()){
+            throw new IllegalArgumentException("Comment not found");
+        }
+        optional.get().setAccepted(false);
+        this.gameCommentRepository.save(optional.get());
     }
 }
