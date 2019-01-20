@@ -16,7 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,6 +56,7 @@ public class GameService {
         }
 
         GameEntity gameEntity = this.modelMapper.map(gameDTO, GameEntity.class);
+        gameEntity.setCreateDate(new Date());
 
         gameEntity.setUserCreator(optionalUserCreator.get());
         this.gameRepository.save(gameEntity);
@@ -107,15 +108,18 @@ public class GameService {
     }
 
     public List<GameDTO> bestGames() {
-        return new ArrayList<>();
+        List<GameEntity> gameEntities = this.gameRepository.bestGames();
+        return gameEntities.stream().map(gameEntity -> this.modelMapper.map(gameEntity, GameDTO.class)).collect(Collectors.toList());
     }
 
     public List<GameDTO> mostPlaying() {
-        return new ArrayList<>();
+        List<GameEntity> gameEntities = this.gameRepository.mostPlaying();
+        return gameEntities.stream().map(gameEntity -> this.modelMapper.map(gameEntity, GameDTO.class)).collect(Collectors.toList());
     }
 
     public List<GameDTO> bestRecently() {
-        return new ArrayList<>();
+        List<GameEntity> gameEntities = this.gameRepository.bestRecently();
+        return gameEntities.stream().map(gameEntity -> this.modelMapper.map(gameEntity, GameDTO.class)).collect(Collectors.toList());
     }
 
     @Transactional
@@ -133,17 +137,21 @@ public class GameService {
         PlayedGameEntity playedGameEntity = playedGameEntityOptional.get();
         GameEntity gameEntity = optionalGame.get();
 
-        playedGameEntity.setScore(updatedScoreDTO.getScore());
+        if (playedGameEntity.getScore() == null)
+            playedGameEntity.setScore(updatedScoreDTO.getScore());
+        else
+            playedGameEntity.setScore(playedGameEntity.getScore() + updatedScoreDTO.getScore());
+
         if (gameEntity.getAverageScore() == null) {
-            gameEntity.setAverageScore(updatedScoreDTO.getScore());
-            gameEntity.setMaxScore(updatedScoreDTO.getScore());
+            gameEntity.setAverageScore(playedGameEntity.getScore());
+            gameEntity.setMaxScore(playedGameEntity.getScore());
 
         } else {
-            long avgScore = (gameEntity.getAverageScore() * (gameEntity.getNumPlayed() - 1) + updatedScoreDTO.getScore()) / gameEntity.getNumPlayed();
+            long avgScore = (gameEntity.getAverageScore() * (gameEntity.getNumPlayed() - 1) + playedGameEntity.getScore()) / gameEntity.getNumPlayed();
             gameEntity.setAverageScore(avgScore);
 
-            if (gameEntity.getMaxScore() < updatedScoreDTO.getScore()) {
-                gameEntity.setMaxScore(updatedScoreDTO.getScore());
+            if (gameEntity.getMaxScore() < playedGameEntity.getScore()) {
+                gameEntity.setMaxScore(playedGameEntity.getScore());
             }
         }
 
@@ -159,7 +167,7 @@ public class GameService {
 
     public void acceptComments(long id) {
         Optional<GameCommentEntity> optional = this.gameCommentRepository.findById(id);
-        if (!optional.isPresent()){
+        if (!optional.isPresent()) {
             throw new IllegalArgumentException("Comment not found");
         }
         optional.get().setAccepted(true);
@@ -168,7 +176,7 @@ public class GameService {
 
     public void declineComment(long id) {
         Optional<GameCommentEntity> optional = this.gameCommentRepository.findById(id);
-        if (!optional.isPresent()){
+        if (!optional.isPresent()) {
             throw new IllegalArgumentException("Comment not found");
         }
         optional.get().setAccepted(false);
