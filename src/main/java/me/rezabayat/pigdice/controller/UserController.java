@@ -81,4 +81,9 @@ public class UserController {
     public void declineComment(@PathVariable("id") long id){
         this.userService.declineComment(id);
     }
+
+    @GetMapping("designed-games/{id}")
+    public List<GameDTO> designedGames(@PathVariable("id") long id){
+        return this.userService.designedGames(id);
+    }
 }

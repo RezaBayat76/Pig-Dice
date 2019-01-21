@@ -1,9 +1,11 @@
 package me.rezabayat.pigdice.service;
 
 import me.rezabayat.pigdice.dal.entity.FollowingEntity;
+import me.rezabayat.pigdice.dal.entity.GameEntity;
 import me.rezabayat.pigdice.dal.entity.UserCommentEntity;
 import me.rezabayat.pigdice.dal.entity.UserEntity;
 import me.rezabayat.pigdice.dal.repository.FollowingRepository;
+import me.rezabayat.pigdice.dal.repository.GameRepository;
 import me.rezabayat.pigdice.dal.repository.UserCommentRepository;
 import me.rezabayat.pigdice.dal.repository.UserRepository;
 import me.rezabayat.pigdice.dto.*;
@@ -21,14 +23,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserCommentRepository userCommentRepository;
     private final FollowingRepository followingRepository;
+    private final GameRepository gameRepository;
     private final WebSocketSender webSocketSender;
     private final ModelMapper modelMapper;
     private final JwtTokenUtil jwtTokenUtil;
 
-    public UserService(UserRepository userRepository, UserCommentRepository userCommentRepository, FollowingRepository followingRepository, WebSocketSender webSocketSender, ModelMapper modelMapper, JwtTokenUtil jwtTokenUtil) {
+    public UserService(UserRepository userRepository, UserCommentRepository userCommentRepository, FollowingRepository followingRepository, GameRepository gameRepository, WebSocketSender webSocketSender, ModelMapper modelMapper, JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
         this.userCommentRepository = userCommentRepository;
         this.followingRepository = followingRepository;
+        this.gameRepository = gameRepository;
         this.webSocketSender = webSocketSender;
         this.modelMapper = modelMapper;
         this.jwtTokenUtil = jwtTokenUtil;
@@ -191,5 +195,14 @@ public class UserService {
         }
         optional.get().setAccepted(false);
         this.userCommentRepository.save(optional.get());
+    }
+
+    public List<GameDTO> designedGames(Long id) {
+        Optional<UserEntity> optionalUserEntity = this.userRepository.findById(id);
+        if (!optionalUserEntity.isPresent()) {
+            throw new IllegalArgumentException("Illegal request");
+        }
+        List<GameEntity> gameEntities = this.gameRepository.designedGames(optionalUserEntity.get());
+        return gameEntities.stream().map(gameEntity -> this.modelMapper.map(gameEntity, GameDTO.class)).collect(Collectors.toList());
     }
 }
