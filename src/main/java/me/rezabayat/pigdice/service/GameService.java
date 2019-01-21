@@ -109,17 +109,17 @@ public class GameService {
 
     public List<GameDTO> bestGames() {
         List<GameEntity> gameEntities = this.gameRepository.bestGames();
-        return gameEntities.stream().map(gameEntity -> this.modelMapper.map(gameEntity, GameDTO.class)).collect(Collectors.toList());
+        return gameEntities.stream().map(gameEntity -> this.modelMapper.map(gameEntity, GameDTO.class)).limit(3).collect(Collectors.toList());
     }
 
     public List<GameDTO> mostPlaying() {
         List<GameEntity> gameEntities = this.gameRepository.mostPlaying();
-        return gameEntities.stream().map(gameEntity -> this.modelMapper.map(gameEntity, GameDTO.class)).collect(Collectors.toList());
+        return gameEntities.stream().map(gameEntity -> this.modelMapper.map(gameEntity, GameDTO.class)).limit(3).collect(Collectors.toList());
     }
 
     public List<GameDTO> bestRecently() {
         List<GameEntity> gameEntities = this.gameRepository.bestRecently();
-        return gameEntities.stream().map(gameEntity -> this.modelMapper.map(gameEntity, GameDTO.class)).collect(Collectors.toList());
+        return gameEntities.stream().map(gameEntity -> this.modelMapper.map(gameEntity, GameDTO.class)).limit(3).collect(Collectors.toList());
     }
 
     @Transactional
