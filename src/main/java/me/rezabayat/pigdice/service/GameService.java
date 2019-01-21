@@ -137,18 +137,24 @@ public class GameService {
         PlayedGameEntity playedGameEntity = playedGameEntityOptional.get();
         GameEntity gameEntity = optionalGame.get();
 
-        if (playedGameEntity.getScore() == null)
+        if (playedGameEntity.getScore() == null) {
             playedGameEntity.setScore(updatedScoreDTO.getScore());
-        else
+        } else {
             playedGameEntity.setScore(playedGameEntity.getScore() + updatedScoreDTO.getScore());
+        }
+
+        if (gameEntity.getNumPlayerScore() == null) {
+            gameEntity.setNumPlayerScore(1l);
+        } else {
+            gameEntity.setNumPlayerScore(gameEntity.getNumPlayerScore() + 1);
+        }
 
         if (gameEntity.getAverageScore() == null) {
             gameEntity.setAverageScore(playedGameEntity.getScore());
             gameEntity.setMaxScore(playedGameEntity.getScore());
-
         } else {
-            long avgScore = (gameEntity.getAverageScore() * (gameEntity.getNumPlayed() - 1) + playedGameEntity.getScore()) / gameEntity.getNumPlayed();
-            gameEntity.setAverageScore(avgScore);
+                long avgScore = (gameEntity.getAverageScore() * (gameEntity.getNumPlayerScore() - 1) + updatedScoreDTO.getScore()) / gameEntity.getNumPlayerScore();
+                gameEntity.setAverageScore(avgScore);
 
             if (gameEntity.getMaxScore() < playedGameEntity.getScore()) {
                 gameEntity.setMaxScore(playedGameEntity.getScore());

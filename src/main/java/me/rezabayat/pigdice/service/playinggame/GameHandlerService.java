@@ -119,7 +119,6 @@ public class GameHandlerService {
             if (Objects.equals(roll, gamePlayingService.getGame().getFallDice())) {
                 gamePlayingService.getGameInfo().getPlayersGameInfo().forEach((aLong, userGameInfo) -> userGameInfo.setHold(true));
                 gamePlayingService.getGameInfo().getPlayersGameInfo().get(userEntity.getId()).setHold(false);
-                gamePlayingService.getGameInfo().getPlayersGameInfo().get(userEntity.getId()).setScore(0);
                 gamePlayingService.getGameInfo().getPlayersGameInfo().get(userEntity.getId()).setCurrentScore(0);
 
             }

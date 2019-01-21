@@ -31,6 +31,8 @@ public class GameEntity {
 
     private Date createDate;
 
+    private Long numPlayerScore;
+
     @ManyToOne
     @JsonManagedReference
     private UserEntity userCreator;
